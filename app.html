@@ -3,25 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MooZ Studio — Làm phim và nội dung AI, tối giản</title>
+<title>MooZ Studio — Làm phim và nội dung AI</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
 <header class="topbar">
-  <div><h1>MooZ Studio</h1><p>Làm phim · Tạo nội dung · Đăng bài — bản sáng tạo, mượn luồng Workflow nhưng viết lại và thêm tính năng riêng</p></div>
+  <div class="brand"><div class="logo">M</div><div><h1>MooZ Studio</h1><p>Làm phim · Nội dung · Đăng bài</p></div></div>
   <div class="spacer"></div>
-  <label style="margin:0;font-weight:400">Dự án <input id="projectName" style="width:220px" placeholder="Tên dự án"></label>
+  <label class="toplabel">Dự án đang mở
+    <select id="projectSelect" style="width:220px"></select>
+  </label>
+  <label class="toplabel">Đổi tên
+    <input id="projectName" style="width:200px" placeholder="Tên dự án">
+  </label>
   <span class="status" id="saveStatus">Chưa lưu thay đổi</span>
-  <button type="button" id="resetBtn">Xóa dự án</button>
+  <button type="button" id="newProjectBtn" class="btn-primary">+ Dự án mới</button>
+  <button type="button" id="resetBtn">Xóa dự án này</button>
 </header>
 <div class="shell">
   <nav class="nav" id="nav" aria-label="Điều hướng chính"></nav>
   <main class="main">
     <div class="steps" id="steps"></div>
     <div id="main"></div>
-    <p class="hint">Bản sáng tạo: giữ khung kịch bản → shot → duyệt → ghép → đăng của app-mooz, nhưng thêm preset đạo diễn nhanh, bảng kiểm duyệt, kiểm tra nhất quán, storyboard theo tỉ lệ thời lượng và bộ caption. App này không tự gửi AI và không tự đăng bài thật.</p>
+    <p class="hint">MooZ Studio v3 — bản hoàn chỉnh, sáng tạo từ luồng Workflow của app-mooz: kịch bản → nhân vật → shot → storyboard → duyệt → timeline → đăng bài. App không tự gửi AI, không tự tạo video, không tự đăng bài thật.</p>
   </main>
 </div>
+<div id="toasts" class="toasts"></div>
 <script src="studio.js"></script>
 </body>
 </html>
