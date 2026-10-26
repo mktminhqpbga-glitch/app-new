@@ -67,9 +67,31 @@
 
   // ---- State ----
   const KEY = 'mooz-studio-v1';
+  // Chuẩn hóa mọi dự án (kể cả file JSON nhập từ nơi khác thiếu trường):
+  // thiếu trường nào thì bù mặc định, không để app vỡ khi truy cập .shots/.posts/...
+  function normalize(input) {
+    const s = (input && typeof input === 'object') ? input : {};
+    const film = (s.film && typeof s.film === 'object') ? s.film : {};
+    const shots = Array.isArray(film.shots) ? film.shots : [];
+    return {
+      project: typeof s.project === 'string' && s.project ? s.project : 'Dự án đầu tiên',
+      script: typeof s.script === 'string' ? s.script : '',
+      film: {
+        title: typeof film.title === 'string' ? film.title : '',
+        style: typeof film.style === 'string' ? film.style : '',
+        characters: Array.isArray(film.characters) ? film.characters : [],
+        shots: shots.map((x) => {
+          const sh = (x && typeof x === 'object') ? x : {};
+          return { id: typeof sh.id === 'string' ? sh.id : uid('shot'), title: typeof sh.title === 'string' ? sh.title : 'Shot chưa đặt tên', imagePrompt: typeof sh.imagePrompt === 'string' ? sh.imagePrompt : '', videoPrompt: typeof sh.videoPrompt === 'string' ? sh.videoPrompt : '', audio: typeof sh.audio === 'string' ? sh.audio : '', camera: typeof sh.camera === 'string' ? sh.camera : '', duration: Number.isFinite(Number(sh.duration)) ? Number(sh.duration) : 5, size: SIZES.includes(sh.size) ? sh.size : '16:9', status: ['cho-duyet', 'da-duyet', 'hoan-thanh'].includes(sh.status) ? sh.status : 'cho-duyet' };
+        }),
+      },
+      brand: { name: '', tone: '', colors: '', notes: '', ...((s.brand && typeof s.brand === 'object') ? s.brand : {}) },
+      posts: Array.isArray(s.posts) ? s.posts : [],
+      affiliate: { name: '', link: '', desc: '', ...((s.affiliate && typeof s.affiliate === 'object') ? s.affiliate : {}) },
+    };
+  }
   let state;
-  try { state = JSON.parse(localStorage.getItem(KEY) || 'null') || null; } catch { state = null; }
-  state = state || { project: 'Dự án đầu tiên', film: { title: '', characters: [], style: '', shots: [] }, script: '', brand: { name: '', tone: '', colors: '', notes: '' }, posts: [], affiliate: { name: '', link: '', desc: '' } };
+  try { state = normalize(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch { state = normalize(null); }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); document.getElementById('saveStatus').textContent = 'Đã lưu trên máy này · ' + new Date().toLocaleTimeString('vi-VN'); } catch { document.getElementById('saveStatus').textContent = 'Không lưu được (bộ nhớ đầy). Hãy xuất JSON.'; } };
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -136,7 +158,7 @@
     document.querySelectorAll('[data-go]').forEach((b) => b.onclick = () => go(b.dataset.go));
     if (view === 'overview') {
       $('expBtn').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })); a.download = 'mooz-studio-project.json'; a.click(); };
-      $('impFile').onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { const data = JSON.parse(await f.text()); if (!data.film || !Array.isArray(data.film.shots)) throw Error('File không phải dự án MooZ Studio.'); state = data; save(); render(); } catch (err) { $('ovStatus').textContent = err.message; $('ovStatus').className = 'status error'; } };
+      $('impFile').onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { const data = JSON.parse(await f.text()); if (!data || typeof data !== 'object') throw Error('File không phải dự án MooZ Studio.'); state = normalize(data); save(); render(); const el = $('ovStatus'); if (el) { el.textContent = 'Đã nhập dự án: ' + state.film.shots.length + ' shot.'; el.className = 'status ok'; } } catch (err) { const el = $('ovStatus'); if (el) { el.textContent = err.message; el.className = 'status error'; } } };
     }
     if (view === 'script') {
       $('scriptText').oninput = (e) => { state.script = e.target.value; save(); };
