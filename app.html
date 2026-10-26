@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MooZ Studio — Làm phim và nội dung AI, tối giản</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="topbar">
+  <div><h1>MooZ Studio</h1><p>Làm phim · Tạo nội dung · Đăng bài — tối giản, rõ ràng</p></div>
+  <div class="spacer"></div>
+  <label style="margin:0;font-weight:400">Dự án <input id="projectName" style="width:220px" placeholder="Tên dự án"></label>
+  <span class="status" id="saveStatus">Chưa lưu thay đổi</span>
+  <button type="button" id="resetBtn">Xóa dự án</button>
+</header>
+<div class="shell">
+  <nav class="nav" id="nav" aria-label="Điều hướng chính"></nav>
+  <main class="main">
+    <div class="steps" id="steps"></div>
+    <div id="main"></div>
+    <p class="hint">App mới tối giản, lấy luồng chính từ app Workflow (app-mooz) nhưng viết lại gọn nhẹ, dễ dùng. App này không tự gửi AI và không tự đăng bài thật.</p>
+  </main>
+</div>
+<script src="studio.js"></script>
+</body>
+</html>
